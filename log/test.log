@@ -1,0 +1,987 @@
+  [1m[36m (1.7ms)[0m  [1mCREATE TABLE "images" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "url" varchar(255), "created_at" datetime, "updated_at" datetime, "post_id" integer, "impressions_count" integer DEFAULT 0) [0m
+  [1m[35m (1.0ms)[0m  CREATE INDEX "index_images_on_post_id" ON "images" ("post_id")
+  [1m[36m (1.0ms)[0m  [1mCREATE TABLE "impressions" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "impressionable_type" varchar(255), "impressionable_id" integer, "user_id" integer, "controller_name" varchar(255), "action_name" varchar(255), "view_name" varchar(255), "request_hash" varchar(255), "ip_address" varchar(255), "session_hash" varchar(255), "message" text, "referrer" text, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "controlleraction_ip_index" ON "impressions" ("controller_name", "action_name", "ip_address")
+  [1m[36m (1.0ms)[0m  [1mCREATE INDEX "controlleraction_request_index" ON "impressions" ("controller_name", "action_name", "request_hash")[0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "controlleraction_session_index" ON "impressions" ("controller_name", "action_name", "session_hash")
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "poly_ip_index" ON "impressions" ("impressionable_type", "impressionable_id", "ip_address")[0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "poly_request_index" ON "impressions" ("impressionable_type", "impressionable_id", "request_hash")
+  [1m[36m (1.0ms)[0m  [1mCREATE INDEX "poly_session_index" ON "impressions" ("impressionable_type", "impressionable_id", "session_hash")[0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "impressionable_type_message_index" ON "impressions" ("impressionable_type", "message", "impressionable_id")
+  [1m[36m (1.0ms)[0m  [1mCREATE INDEX "index_impressions_on_user_id" ON "impressions" ("user_id")[0m
+  [1m[35m (1.1ms)[0m  CREATE TABLE "posts" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar(255), "user_id" integer, "created_at" datetime, "updated_at" datetime, "body" text, "visible" boolean DEFAULT 'f', "price" varchar(255), "cached_votes_total" integer DEFAULT 0, "cached_votes_score" integer DEFAULT 0, "cached_votes_up" integer DEFAULT 0, "cached_votes_down" integer DEFAULT 0, "images_count" integer DEFAULT 0, "impressions_count" integer DEFAULT 0) 
+  [1m[36m (1.0ms)[0m  [1mCREATE INDEX "index_posts_on_cached_votes_down" ON "posts" ("cached_votes_down")[0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "index_posts_on_cached_votes_score" ON "posts" ("cached_votes_score")
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_posts_on_cached_votes_total" ON "posts" ("cached_votes_total")[0m
+  [1m[35m (1.1ms)[0m  CREATE INDEX "index_posts_on_cached_votes_up" ON "posts" ("cached_votes_up")
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_posts_on_user_id" ON "posts" ("user_id")[0m
+  [1m[35m (1.0ms)[0m  CREATE TABLE "users" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(255) NOT NULL, "email" varchar(255), "crypted_password" varchar(255), "salt" varchar(255), "created_at" datetime, "updated_at" datetime, "remember_me_token" varchar(255), "remember_me_token_expires_at" datetime, "reset_password_token" varchar(255), "reset_password_token_expires_at" datetime, "reset_password_email_sent_at" datetime, "activation_state" varchar(255), "activation_token" varchar(255), "activation_token_expires_at" datetime) 
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_users_on_activation_token" ON "users" ("activation_token")[0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "index_users_on_remember_me_token" ON "users" ("remember_me_token")
+  [1m[36m (1.2ms)[0m  [1mCREATE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token")[0m
+  [1m[35m (1.0ms)[0m  CREATE TABLE "votes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "votable_id" integer, "votable_type" varchar(255), "voter_id" integer, "voter_type" varchar(255), "vote_flag" boolean, "vote_scope" varchar(255), "created_at" datetime, "updated_at" datetime) 
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_votes_on_votable_id_and_votable_type_and_vote_scope" ON "votes" ("votable_id", "votable_type", "vote_scope")[0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "index_votes_on_voter_id_and_voter_type_and_vote_scope" ON "votes" ("voter_id", "voter_type", "vote_scope")
+  [1m[36m (0.9ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [1m[35m (1.0ms)[0m  CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")
+  [1m[36m (0.1ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35m (0.9ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130817195343')
+  [1m[36m (0.7ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130810054033')[0m
+  [1m[35m (0.8ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811164651')
+  [1m[36m (1.1ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130811164652')[0m
+  [1m[35m (1.0ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811164653')
+  [1m[36m (0.9ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130811164654')[0m
+  [1m[35m (0.9ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811210732')
+  [1m[36m (0.9ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130811211114')[0m
+  [1m[35m (0.7ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811212806')
+  [1m[36m (0.8ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130813031117')[0m
+  [1m[35m (0.8ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130813031817')
+  [1m[36m (1.1ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130817160742')[0m
+  [1m[35m (1.6ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130817161614')
+  [1m[36m (1.0ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130817191748')[0m
+  [1m[35m (1.0ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130817193501')
+  [1m[36m (1.0ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130817194153')[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.1ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.0ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.0ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('dannie') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('jacquelyn@lednercronin.biz') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (3.6ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["crypted_password", "$2a$10$Wi6rXvphcJuV1T2i5nZJf.AQjCqVHHGDlez43NHp0MFlDtdYRzBlu"], ["email", "jacquelyn@lednercronin.biz"], ["salt", "WWzWxsNp5ssmNu3vJXPd"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["username", "dannie"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.2ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('dannie') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('jacquelyn@lednercronin.biz') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (1.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Similique doloribus perferendis modi.Accusamus illo omnis incidunt ut magnam odit magni.Harum sint labore."], ["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["title", "etquilaborefacilisexercitationem"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (1.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('marcelle_hyatt') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('dante@luettgen.name') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["crypted_password", "$2a$10$3vl3sggElfBC3odV32QIIeO/PNiXDzFAQG7FiwcRyEnsua2N3/7JC"], ["email", "dante@luettgen.name"], ["salt", "G2DjYymksLiqHHjsnJft"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["username", "marcelle_hyatt"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('marcelle_hyatt') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('dante@luettgen.name') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.6ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Est repellendus voluptatibus.Accusamus quod odio nulla dolor qui.Placeat illo aut."], ["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["title", "dignissimoseiusinquasisit"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.6ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.2ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('clay.schroeder') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('maribel@boyerkautzer.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.5ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["crypted_password", "$2a$10$plCm039vCMMpQtjPrGssi.cLZ3g/vIE7fQoRXyKAm7qrb05Hbd5kC"], ["email", "maribel@boyerkautzer.com"], ["salt", "ekuqkqSYpax9e8uGhSyx"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["username", "clay.schroeder"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('clay.schroeder') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('maribel@boyerkautzer.com') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Non quam nobis veritatis voluptate.Dolorum quibusdam qui quis.Rem repellat eos laudantium fugit."], ["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["title", "dictaconsequunturvitaeetab"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (7.6ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('kaycee.emmerich') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('elta@nicolas.net') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["crypted_password", "$2a$10$pqicelDEzeQ13EaYav8eZe2Vulo6UVUqUfeybxfmbsKjQGy0gvraS"], ["email", "elta@nicolas.net"], ["salt", "qzs8JXC27zNGSfAkSdjL"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["username", "kaycee.emmerich"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('kaycee.emmerich') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('elta@nicolas.net') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Ut sit officia tempore aut eaque excepturi qui.Voluptatem doloribus eligendi quod repellendus placeat repellat nihil.Neque porro veniam dolores repellat officiis error enim."], ["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["title", "estutsequifugitcorrupti"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('demetris.ernser') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('laurine_halvorson@mayerblock.name') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["crypted_password", "$2a$10$V6UH0qp9q9bio2DpGbikbeywMce/an5IAXevT9qzXuNH97tQniX9u"], ["email", "laurine_halvorson@mayerblock.name"], ["salt", "4YSt4uBo6LkSzDc3qHPa"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["username", "demetris.ernser"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('demetris.ernser') AND "users"."id" != 2) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('laurine_halvorson@mayerblock.name') AND "users"."id" != 2) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Eius veritatis officia corrupti commodi.Officia accusamus tenetur provident ut temporibus.Sint tempora neque alias."], ["created_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["title", "idnesciuntutporroea"], ["updated_at", Sun, 20 Jul 2014 17:50:23 UTC +00:00], ["user_id", 2]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSELECT COUNT(*) FROM "posts" WHERE "posts"."visible" = 'f'[0m
+  [1m[35mPost Load (0.1ms)[0m  SELECT "posts".* FROM "posts" WHERE "posts"."visible" = 'f' ORDER BY created_at DESC
+  [1m[36m (8.2ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('earlene.little') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('sarah@turcottegreen.info') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["crypted_password", "$2a$10$x4pBnrXhmpEXzABJ4VMfreEFnkoeJ4NfepB3FlfGjXC2yW768FFeu"], ["email", "sarah@turcottegreen.info"], ["salt", "bJavY6XNEsMjVs7R1UA6"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["username", "earlene.little"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('earlene.little') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('sarah@turcottegreen.info') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.8ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Fuga perspiciatis consequatur aliquid necessitatibus.Optio non consectetur numquam ratione sint velit.Ut ut ut inventore eveniet consequatur tempora."], ["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["title", "consequaturconsequaturenimdoloremillo"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["user_id", 1], ["visible", true]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('joan_roberts') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('kiel@schmelercorkery.net') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.5ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["crypted_password", "$2a$10$u2ptlO3mTX.bjhZ/BChiqeOe7HNbz6gjYz2IXiCETFWYFEDTW0tF6"], ["email", "kiel@schmelercorkery.net"], ["salt", "HtFhxwyEFABpyMFoJERN"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["username", "joan_roberts"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('joan_roberts') AND "users"."id" != 2) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('kiel@schmelercorkery.net') AND "users"."id" != 2) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Et harum provident.Iusto ut maxime est quaerat temporibus.Perferendis quae consequatur porro officia aperiam."], ["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["title", "dictaatqueporrodoloremautem"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["user_id", 2], ["visible", true]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('jimmie') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('thalia@terry.net') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["crypted_password", "$2a$10$qgM6ywyS9BhIDrZhWVZD.eQdAJTZ.Hm0wyGP0JTl7im/McCrH6Suu"], ["email", "thalia@terry.net"], ["salt", "mL5Lz85n9MzGJdFuhFos"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["username", "jimmie"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('jimmie') AND "users"."id" != 3) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('thalia@terry.net') AND "users"."id" != 3) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Tempora repudiandae iusto.Et eum qui sed vero et aliquam.Ut exercitationem vel."], ["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["title", "etabnumquamitaquevoluptate"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["user_id", 3], ["visible", true]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('dino_barton') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('robyn.kuphal@kohler.info') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["crypted_password", "$2a$10$7MvIvhaJ3ZvULsJawvWDaO.l5eOugdVHVFhWg.N98mBc6hTFyft.C"], ["email", "robyn.kuphal@kohler.info"], ["salt", "q89gPTm8YwHpY1oY3LPm"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["username", "dino_barton"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('dino_barton') AND "users"."id" != 4) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('robyn.kuphal@kohler.info') AND "users"."id" != 4) LIMIT 1
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Voluptas asperiores optio nesciunt qui doloremque.Facilis est quo omnis consequatur unde et.Adipisci aspernatur hic laboriosam quaerat excepturi id."], ["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["title", "delectusnonsedvoluptasneque"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["user_id", 4], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('freeman_mcdermott') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('monty_quitzon@ernsermarquardt.name') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["crypted_password", "$2a$10$pTcNF6QwH2W9O6JZCyU75esBaB4gqzmk.8FlPhPE6uuudmmkDvax2"], ["email", "monty_quitzon@ernsermarquardt.name"], ["salt", "vU5MQQvVZ8c5M49vLM8D"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["username", "freeman_mcdermott"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('freeman_mcdermott') AND "users"."id" != 5) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('monty_quitzon@ernsermarquardt.name') AND "users"."id" != 5) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Amet quia fugiat corrupti est ducimus nam.Quia quasi omnis.Sit modi nulla ut culpa tempora aut."], ["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["title", "evenietbeataeetveldolores"], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["user_id", 5], ["visible", true]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSELECT COUNT(*) FROM "posts" WHERE "posts"."visible" = 't'[0m
+  [1m[35mPost Load (0.2ms)[0m  SELECT "posts".* FROM "posts" WHERE "posts"."visible" = 't' ORDER BY created_at DESC
+  [1m[36m (8.8ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mUser Load (0.2ms)[0m  [1mSELECT "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.5ms)[0m  [1mINSERT INTO "users" ("created_at", "updated_at", "username") VALUES (?, ?, ?)[0m  [["created_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["updated_at", Sun, 20 Jul 2014 17:50:24 UTC +00:00], ["username", "arbitrary_string"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('ARBITRARY_STRING') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('ARBITRARY_STRING') LIMIT 1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36m (0.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.4ms)[0m  begin transaction
+  [1m[36mUser Exists (0.2ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE "users"."username" IS NULL LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE "users"."username" IS NULL LIMIT 1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE "users"."username" IS NULL LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE "users"."username" IS NULL LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36m (0.0ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('prince') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('adriana@beahan.info') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["crypted_password", "$2a$10$uae9V2czckxqb.c6px9oKObgSkQVNb1QjVwA/X28kOWNGTa7SxRTe"], ["email", "adriana@beahan.info"], ["salt", "d8GzFqMBXycg1k6ys4dF"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["username", "prince"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('prince') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('adriana@beahan.info') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Impedit voluptas dolorem commodi eligendi accusamus iusto porro.Aliquid delectus sed velit.Et quo autem eaque est illo temporibus omnis."], ["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["title", "autemnulladignissimosdoloressit"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["url", "http://kautzerkautzer.name/charlotte_hyatt.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.7ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('michaela') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('dean@becker.info') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["crypted_password", "$2a$10$20X2ot2og8SnUwmG9KqUbuRo3zrWjvnmePLTee1glNFJPeRMCqd4i"], ["email", "dean@becker.info"], ["salt", "JxKqpQGXUs63s9Jf77sT"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["username", "michaela"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('michaela') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('dean@becker.info') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Minus alias a qui veniam sequi.Earum ex suscipit occaecati.Numquam nostrum nisi nemo doloribus eos consequuntur dolorem."], ["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["title", "quiodioadaperiamdoloribus"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["url", "http://jakubowskiherzog.biz/steve.champlin.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('bailee') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('fiona@heathcote.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["crypted_password", "$2a$10$Ne2q3yNCSEbUOgddMBpEF.iUlUAg7A0EVI6Xsyx2wvuGHJkuondcu"], ["email", "fiona@heathcote.org"], ["salt", "erLJ3FpGH2H4XzGf8y1S"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["username", "bailee"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('bailee') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('fiona@heathcote.org') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Quia commodi aut culpa.Corporis temporibus aperiam veritatis.Soluta nobis illum beatae quibusdam omnis facilis enim."], ["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["title", "hicveritatisetconsequaturet"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["url", "http://wunsch.org/ahmad.goldner.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.2ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('robert.langosh') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('amir@haagabernathy.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.6ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["crypted_password", "$2a$10$UjyTD8RdzueNpgo5mj3q5eHOx1LXNBaXMgqoIsOfoTyS74ZMpSM2u"], ["email", "amir@haagabernathy.com"], ["salt", "QsEMz9yaBb4yGeqyzFz3"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["username", "robert.langosh"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('robert.langosh') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('amir@haagabernathy.com') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.5ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Blanditiis placeat non voluptatem ipsam facere adipisci.Corrupti et impedit nam.Tenetur exercitationem deserunt et non sit."], ["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["title", "doloressitaspernaturrecusandaebeatae"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["url", "http://rogahn.biz/jerod.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (7.9ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('tito_conroy') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('luisa.ryan@champlin.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["crypted_password", "$2a$10$5a2br0Crzvg68JdKuA.wYu7QQRt5./86Dg0gjqtkkDPByqR9vrOpS"], ["email", "luisa.ryan@champlin.com"], ["salt", "4WSrzDrVP4v5pG9o438P"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["username", "tito_conroy"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('tito_conroy') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('luisa.ryan@champlin.com') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Delectus minima sapiente in culpa aliquid deleniti dolores.Molestias laudantium ab explicabo animi exercitationem.Numquam non explicabo et ea et ut."], ["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["title", "exercitationemnullavelestaccusantium"], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:25 UTC +00:00], ["url", "http://hilpertohara.org/caandra.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('katharina_robel') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('billie.jacobson@roobkoch.biz') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.5ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["crypted_password", "$2a$10$nMo.9jpufCHIx2lNCFhfF.EWoALyM0xWcQO3UbutyoJ.lG6HPbhTW"], ["email", "billie.jacobson@roobkoch.biz"], ["salt", "V4odmzfsRNy1tFC5WX38"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["username", "katharina_robel"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('katharina_robel') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('billie.jacobson@roobkoch.biz') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Exercitationem et maxime voluptatem cupiditate et.Quia totam repellat consectetur mollitia error eaque.Repellendus iste velit."], ["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["title", "quaealiquidinquassed"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["url", "http://nikolaus.com/robbie.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('otis_schamberger') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('guillermo_rath@flatley.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["crypted_password", "$2a$10$sGBJ5aDxoRBwu7cK5yfBTuuE4h5IskBuFyd5it/qBjnSd8DZwl8b2"], ["email", "guillermo_rath@flatley.com"], ["salt", "ivA4b7uyRDxqmRykpoQR"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["username", "otis_schamberger"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('otis_schamberger') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('guillermo_rath@flatley.com') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Vel itaque illo quia dolorum iusto.Amet est hic.Asperiores a necessitatibus sequi et quia."], ["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["title", "velculpavelquasilaborum"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["url", "http://wehner.biz/chelsea.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('stephon.olson') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('derick@muller.net') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["crypted_password", "$2a$10$C177GRqvSEwayBJ3yDtUHO/jNZGfReIf4t3F92uOnbWuZHjoo9U7O"], ["email", "derick@muller.net"], ["salt", "5L3Dk89GLqXGhiJXWxC5"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["username", "stephon.olson"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('stephon.olson') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('derick@muller.net') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Vel enim non reiciendis.Vel consequatur ut distinctio maxime nesciunt.Vero sit neque cupiditate voluptatem."], ["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["title", "evenietcumquequimolestiaemollitia"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["url", "http://dickinson.org/freeman.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.4ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('presley') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('caleigh_hahn@schmitt.name') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["crypted_password", "$2a$10$m/uIhDwp/R2A3IGuboSUneiaCrRy/HgaK5xK9yIMz7Ene/OejvYGe"], ["email", "caleigh_hahn@schmitt.name"], ["salt", "L5MLxFq4FDWzkYG3qxBw"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["username", "presley"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('presley') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('caleigh_hahn@schmitt.name') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Earum vero quidem et temporibus harum architecto.Error dolorem et dolor.Eaque minima molestias eum sunt sit optio et."], ["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["title", "aliquamiurevoluptatemaccusamuseaque"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["url", "http://cormierschneider.info/devyn.thiel.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.4ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('penelope') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('henderson@cruickshank.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["crypted_password", "$2a$10$d7arDlSdeFYjXJawpVCJyuMp7YVZES3TBcO9l.fKmaLymA9Y2d4Ii"], ["email", "henderson@cruickshank.org"], ["salt", "pxsq5EwDDz7AFL8v4346"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["username", "penelope"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('penelope') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('henderson@cruickshank.org') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Repellat rerum ut perferendis tempora voluptates.Molestiae reprehenderit commodi quibusdam.Aut et fugit dolor vero."], ["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["title", "eahicsolutaetvel"], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:26 UTC +00:00], ["url", "http://bednarokon.name/freda.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('earl_becker') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('nigel@reichel.name') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:27 UTC +00:00], ["crypted_password", "$2a$10$jLTa80scZ4f3NTCe8NmsIOxWsRBKigIKebcRGiVb.POKbpZrD0i0e"], ["email", "nigel@reichel.name"], ["salt", "9EGrZpF3xqspBVLp6v7j"], ["updated_at", Sun, 20 Jul 2014 17:50:27 UTC +00:00], ["username", "earl_becker"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('earl_becker') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('nigel@reichel.name') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Et nihil id nihil quibusdam id.Adipisci optio eligendi unde.Aut expedita omnis ipsum ex veniam."], ["created_at", Sun, 20 Jul 2014 17:50:27 UTC +00:00], ["title", "sitvitaeconsequaturvelveniam"], ["updated_at", Sun, 20 Jul 2014 17:50:27 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sun, 20 Jul 2014 17:50:27 UTC +00:00], ["post_id", 1], ["updated_at", Sun, 20 Jul 2014 17:50:27 UTC +00:00], ["url", "http://lynchlittle.biz/orland_boyer.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36m (1.3ms)[0m  [1mCREATE TABLE "images" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "url" varchar(255), "created_at" datetime, "updated_at" datetime, "post_id" integer, "impressions_count" integer DEFAULT 0) [0m
+  [1m[35m (1.2ms)[0m  CREATE INDEX "index_images_on_post_id" ON "images" ("post_id")
+  [1m[36m (1.1ms)[0m  [1mCREATE TABLE "impressions" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "impressionable_type" varchar(255), "impressionable_id" integer, "user_id" integer, "controller_name" varchar(255), "action_name" varchar(255), "view_name" varchar(255), "request_hash" varchar(255), "ip_address" varchar(255), "session_hash" varchar(255), "message" text, "referrer" text, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (1.1ms)[0m  CREATE INDEX "controlleraction_ip_index" ON "impressions" ("controller_name", "action_name", "ip_address")
+  [1m[36m (1.2ms)[0m  [1mCREATE INDEX "controlleraction_request_index" ON "impressions" ("controller_name", "action_name", "request_hash")[0m
+  [1m[35m (1.1ms)[0m  CREATE INDEX "controlleraction_session_index" ON "impressions" ("controller_name", "action_name", "session_hash")
+  [1m[36m (1.2ms)[0m  [1mCREATE INDEX "poly_ip_index" ON "impressions" ("impressionable_type", "impressionable_id", "ip_address")[0m
+  [1m[35m (1.0ms)[0m  CREATE INDEX "poly_request_index" ON "impressions" ("impressionable_type", "impressionable_id", "request_hash")
+  [1m[36m (1.3ms)[0m  [1mCREATE INDEX "poly_session_index" ON "impressions" ("impressionable_type", "impressionable_id", "session_hash")[0m
+  [1m[35m (1.2ms)[0m  CREATE INDEX "impressionable_type_message_index" ON "impressions" ("impressionable_type", "message", "impressionable_id")
+  [1m[36m (1.1ms)[0m  [1mCREATE INDEX "index_impressions_on_user_id" ON "impressions" ("user_id")[0m
+  [1m[35m (1.0ms)[0m  CREATE TABLE "posts" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar(255), "user_id" integer, "created_at" datetime, "updated_at" datetime, "body" text, "visible" boolean DEFAULT 'f', "price" varchar(255), "cached_votes_total" integer DEFAULT 0, "cached_votes_score" integer DEFAULT 0, "cached_votes_up" integer DEFAULT 0, "cached_votes_down" integer DEFAULT 0, "images_count" integer DEFAULT 0, "impressions_count" integer DEFAULT 0) 
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_posts_on_cached_votes_down" ON "posts" ("cached_votes_down")[0m
+  [1m[35m (1.3ms)[0m  CREATE INDEX "index_posts_on_cached_votes_score" ON "posts" ("cached_votes_score")
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_posts_on_cached_votes_total" ON "posts" ("cached_votes_total")[0m
+  [1m[35m (1.2ms)[0m  CREATE INDEX "index_posts_on_cached_votes_up" ON "posts" ("cached_votes_up")
+  [1m[36m (1.2ms)[0m  [1mCREATE INDEX "index_posts_on_user_id" ON "posts" ("user_id")[0m
+  [1m[35m (1.1ms)[0m  CREATE TABLE "users" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(255) NOT NULL, "email" varchar(255), "crypted_password" varchar(255), "salt" varchar(255), "created_at" datetime, "updated_at" datetime, "remember_me_token" varchar(255), "remember_me_token_expires_at" datetime, "reset_password_token" varchar(255), "reset_password_token_expires_at" datetime, "reset_password_email_sent_at" datetime, "activation_state" varchar(255), "activation_token" varchar(255), "activation_token_expires_at" datetime, "first_name" varchar(255), "last_name" varchar(255), "speciality" varchar(255), "address" varchar(255), "contact_number" integer, "description" text, "oneliner" varchar(50), "photo" blob) 
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_users_on_activation_token" ON "users" ("activation_token")[0m
+  [1m[35m (1.1ms)[0m  CREATE INDEX "index_users_on_remember_me_token" ON "users" ("remember_me_token")
+  [1m[36m (1.2ms)[0m  [1mCREATE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token")[0m
+  [1m[35m (1.3ms)[0m  CREATE TABLE "votes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "votable_id" integer, "votable_type" varchar(255), "voter_id" integer, "voter_type" varchar(255), "vote_flag" boolean, "vote_scope" varchar(255), "created_at" datetime, "updated_at" datetime) 
+  [1m[36m (1.4ms)[0m  [1mCREATE INDEX "index_votes_on_votable_id_and_votable_type_and_vote_scope" ON "votes" ("votable_id", "votable_type", "vote_scope")[0m
+  [1m[35m (1.3ms)[0m  CREATE INDEX "index_votes_on_voter_id_and_voter_type_and_vote_scope" ON "votes" ("voter_id", "voter_type", "vote_scope")
+  [1m[36m (1.0ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [1m[35m (1.0ms)[0m  CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")
+  [1m[36m (0.1ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35m (1.0ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20140720224608')
+  [1m[36m (0.8ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130810054033')[0m
+  [1m[35m (0.9ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811164651')
+  [1m[36m (1.0ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130811164652')[0m
+  [1m[35m (0.9ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811164653')
+  [1m[36m (1.0ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130811164654')[0m
+  [1m[35m (1.1ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811210732')
+  [1m[36m (1.1ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130811211114')[0m
+  [1m[35m (1.1ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811212806')
+  [1m[36m (1.0ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130813031117')[0m
+  [1m[35m (1.0ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130813031817')
+  [1m[36m (1.0ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130817160742')[0m
+  [1m[35m (0.9ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130817161614')
+  [1m[36m (1.0ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130817191748')[0m
+  [1m[35m (1.0ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130817193501')
+  [1m[36m (1.2ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130817194153')[0m
+  [1m[35m (1.0ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130817195343')
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('branson') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('tianna@shields.name') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (3.7ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:32 UTC +00:00], ["crypted_password", "$2a$10$adoumVORTiQ9BwyEhoA81ut1QBHqqda3HGPM1R4TB.2.h02aXNgUW"], ["email", "tianna@shields.name"], ["salt", "RxfdCgzZ5yJZvv8CCoqB"], ["updated_at", Sat, 26 Jul 2014 07:24:32 UTC +00:00], ["username", "branson"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('branson') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('tianna@shields.name') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (1.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Nam vel velit blanditiis architecto.Et consectetur mollitia vero quo.Quis cupiditate suscipit numquam nihil at."], ["created_at", Sat, 26 Jul 2014 07:24:32 UTC +00:00], ["title", "autpariaturetvelitfuga"], ["updated_at", Sat, 26 Jul 2014 07:24:32 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.8ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('claude.kulas') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('stacey@block.biz') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["crypted_password", "$2a$10$ETcSAujrgZ0gE/Pi3yqZCeApbmzHd4ZJwXeK/wHZ58R5PT1Jm8hOu"], ["email", "stacey@block.biz"], ["salt", "SWDkqRBPxtRAtDFENrs9"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["username", "claude.kulas"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('claude.kulas') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('stacey@block.biz') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Autem et pariatur quo sunt veritatis nihil commodi.Dicta aliquid beatae et illo debitis.Et saepe ipsa qui facilis est aliquam blanditiis."], ["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["title", "porronobiseaetquia"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.7ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('bernadette_schmeler') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('esmeralda_hilll@reichel.name') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["crypted_password", "$2a$10$2FOpBCaJxFVCoJ601wDwEOCsnxcrqM1PxTZqQ.dCqNw5sUsHcs3Py"], ["email", "esmeralda_hilll@reichel.name"], ["salt", "YRqqgWx1vLt8pQ5R6Uyj"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["username", "bernadette_schmeler"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('bernadette_schmeler') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('esmeralda_hilll@reichel.name') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Nobis ut sunt quidem corrupti laborum consectetur a.Rerum voluptas est similique voluptatem omnis.Quis itaque non rerum sunt."], ["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["title", "temporeetdoloribusbeataeeligendi"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('frances') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('emily@schneidercrooks.info') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["crypted_password", "$2a$10$SiFR4MuzSsTQcLw4sqXQUOfHRDj1JWphW0n8raHChePE9BBarWh4O"], ["email", "emily@schneidercrooks.info"], ["salt", "3qVV2pDzGG5sbjAKxyfh"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["username", "frances"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('frances') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('emily@schneidercrooks.info') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Et rerum dolor enim rerum molestiae.Nihil qui itaque.Et est maiores vitae sint neque numquam."], ["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["title", "abipsaillumdolorestemporibus"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('kathlyn.auer') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('caesar@crist.biz') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["crypted_password", "$2a$10$DVbxHWCahkcxBllZEgcbAeMT0GvxDDsbLLa7G1wad6n9cf/a/GPLy"], ["email", "caesar@crist.biz"], ["salt", "1xaqyvF5JEJWpMP5Vpq2"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["username", "kathlyn.auer"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('kathlyn.auer') AND "users"."id" != 2) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('caesar@crist.biz') AND "users"."id" != 2) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Nihil ut incidunt odio quia autem dolore.Sed corporis assumenda sint aperiam quia eligendi.Atque qui explicabo officia dignissimos perferendis."], ["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["title", "similiqueeaetquiadelectus"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["user_id", 2]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSELECT COUNT(*) FROM "posts" WHERE "posts"."visible" = 'f'[0m
+  [1m[35mPost Load (0.1ms)[0m  SELECT "posts".* FROM "posts" WHERE "posts"."visible" = 'f' ORDER BY created_at DESC
+  [1m[36m (8.6ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('flavie_anderson') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('jayme.murphy@ortiz.info') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["crypted_password", "$2a$10$byd2lMT9gTCuK5TToCWf2.b/MHCPloFwoOXM6Jd2EJo1y4vRTL0oS"], ["email", "jayme.murphy@ortiz.info"], ["salt", "iyPmqaPMJYgkpRUK8aqr"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["username", "flavie_anderson"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('flavie_anderson') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('jayme.murphy@ortiz.info') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.5ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Qui officiis enim soluta dignissimos perspiciatis.Quisquam repellat eos voluptate.Saepe quibusdam rerum deserunt eius."], ["created_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["title", "eligendioditsapientesolutaenim"], ["updated_at", Sat, 26 Jul 2014 07:24:33 UTC +00:00], ["user_id", 1], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('marilyne') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('marjorie@steuber.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["crypted_password", "$2a$10$/b5ErxitUZiFdNEz8EWTJe0K.Yi0Eza57mwnjQjA2fPlDo3Q40Oy."], ["email", "marjorie@steuber.com"], ["salt", "WZSCpUpnjE1G6yyBiSoi"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["username", "marilyne"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('marilyne') AND "users"."id" != 2) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('marjorie@steuber.com') AND "users"."id" != 2) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Qui non qui.Impedit atque ab voluptates voluptatem earum.Vel culpa eos animi in."], ["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["title", "ducimusvoluptatibusbeataeeaa"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["user_id", 2], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('osborne_nienow') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('gaston@paucek.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["crypted_password", "$2a$10$YzQxf.RAhSh4VN1b7HoTP.myEwIfye0zdaVxLiktu/2szYert32LS"], ["email", "gaston@paucek.com"], ["salt", "nvS5kzDdDTUVmyhWFpXT"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["username", "osborne_nienow"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('osborne_nienow') AND "users"."id" != 3) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('gaston@paucek.com') AND "users"."id" != 3) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Animi nostrum iste itaque quas id rem ut.Quam veniam qui excepturi sed voluptatum.Itaque rerum velit eius qui."], ["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["title", "oditiurerepellataliasdignissimos"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["user_id", 3], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('camron') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('william_hayes@legros.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["crypted_password", "$2a$10$EnWmsV0/A9nRTvms3isv9usQZJC7Y.BLo8aSB3Bg9ukbYJEbfyjkO"], ["email", "william_hayes@legros.com"], ["salt", "WzYeoWwZ4bLAb6huaQtc"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["username", "camron"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('camron') AND "users"."id" != 4) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('william_hayes@legros.com') AND "users"."id" != 4) LIMIT 1
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Quisquam nihil commodi quibusdam laboriosam officia.Autem pariatur optio numquam.Rerum accusantium excepturi doloremque ut aut voluptatum."], ["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["title", "asperioresreprehenderitinabpariatur"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["user_id", 4], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('leta.dibbert') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('hipolito.tromp@goldnerledner.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["crypted_password", "$2a$10$ZmMcBY6qxBiWsX0k17kwxu.Hp0eZ3p6euTuS2qIbbVhHAFkBO1ipC"], ["email", "hipolito.tromp@goldnerledner.org"], ["salt", "eNAyxosNuFLEhXshuwzN"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["username", "leta.dibbert"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('leta.dibbert') AND "users"."id" != 5) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('hipolito.tromp@goldnerledner.org') AND "users"."id" != 5) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Consectetur assumenda sit.Rem et modi vel.Et ea et rerum."], ["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["title", "quaeratvelquicumlabore"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["user_id", 5], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSELECT COUNT(*) FROM "posts" WHERE "posts"."visible" = 't'[0m
+  [1m[35mPost Load (0.1ms)[0m  SELECT "posts".* FROM "posts" WHERE "posts"."visible" = 't' ORDER BY created_at DESC
+  [1m[36m (8.6ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mUser Exists (0.2ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE "users"."username" IS NULL LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE "users"."username" IS NULL LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mUser Load (0.2ms)[0m  [1mSELECT "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT 1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "users" ("created_at", "updated_at", "username") VALUES (?, ?, ?)[0m  [["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["username", "arbitrary_string"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('ARBITRARY_STRING') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('ARBITRARY_STRING') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36m (0.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE "users"."username" IS NULL LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE "users"."username" IS NULL LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('xxxxx') LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('nicola') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('raleigh@grant.net') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["crypted_password", "$2a$10$H142Gw/upjPO/nyohOXsfOQf0pnsMG5xescjwl/6JHGo6y9IUHoKi"], ["email", "raleigh@grant.net"], ["salt", "WQQry9ybHxsjbfip9A7Z"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["username", "nicola"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('nicola') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('raleigh@grant.net') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Architecto mollitia ut repellat animi culpa non ducimus.Enim velit fugiat deserunt doloribus.Tempore corporis cupiditate maxime iste ut."], ["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["title", "rerumatnondoloresporro"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["url", "http://mraz.net/bertha.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.6ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('bertha_effertz') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('dominique_mertz@metzhomenick.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["crypted_password", "$2a$10$iYT9y6KRCa1HlHGsXF1hze5THyZXQ4WAgOYm7.bs7LVqphEOaHdmq"], ["email", "dominique_mertz@metzhomenick.com"], ["salt", "utUpTbAFR3qKfMEJfSJy"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["username", "bertha_effertz"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('bertha_effertz') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('dominique_mertz@metzhomenick.com') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Cum neque enim.Tempora autem aperiam quae accusamus.Id consequatur hic alias."], ["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["title", "reiciendisvoluptasnemoprovidentlaborum"], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:34 UTC +00:00], ["url", "http://mayert.com/ocie_hartmann.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('jayson_heaney') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('emma@kiehn.net') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["crypted_password", "$2a$10$0CFYqY1QgZOSP0mmySA46eY3cndDkMXY.vNkB3tE3uJCTop3Mf6cO"], ["email", "emma@kiehn.net"], ["salt", "81fsQVb9kJW2RkcdZTrR"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["username", "jayson_heaney"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('jayson_heaney') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('emma@kiehn.net') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Ut ipsum officia eos quia.Molestias placeat eius nam facilis ipsa ut.Nobis qui magni neque ea."], ["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["title", "oditcumporroetvelit"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["url", "http://sanford.net/cletus.runte.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('kody.wunsch') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('buck@rippin.name') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["crypted_password", "$2a$10$hB./xs/G1vLzpaPtyBnYjeTA6SEFqLULziOrWCCs51zEJ5w60tiUm"], ["email", "buck@rippin.name"], ["salt", "Key6um21at1xZzQ9g3ey"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["username", "kody.wunsch"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('kody.wunsch') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('buck@rippin.name') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Dolor non nisi necessitatibus eum sit occaecati assumenda.Rerum officia iusto quos.Consequatur ipsam iure."], ["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["title", "aliquamoptioetnobiserror"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["url", "http://waelchiconnelly.info/ellis.hilpert.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('christine') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('ova_champlin@gibson.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["crypted_password", "$2a$10$BccTVlX1GyGGpa7if2agFeE/RAv6cMzaunowhBQnx7sIBSZfCIAc2"], ["email", "ova_champlin@gibson.org"], ["salt", "sHmsTUDQMQcCqRL7ndzG"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["username", "christine"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('christine') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('ova_champlin@gibson.org') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Atque voluptas ipsam laudantium quis enim.Voluptas quasi laboriosam commodi aut veniam voluptas.Magni qui ut eius."], ["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["title", "quasteneturillorerumdolorum"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["url", "http://legrosrowe.name/salvador.mcglynn.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('emmett_flatley') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('rae@watsica.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["crypted_password", "$2a$10$QJBwQURPfm1WwXp1CzXMeO86rK5TInnAzElsXAd2/vuDxQ2HCuRyG"], ["email", "rae@watsica.com"], ["salt", "ff6VJ6yzmddSuU2iqwyH"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["username", "emmett_flatley"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('emmett_flatley') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('rae@watsica.com') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Iste modi libero error consequatur.Placeat eos officia sunt sint.Non optio delectus consectetur ut eum quasi eveniet."], ["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["title", "tenetureiusestestnumquam"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["url", "http://hermistonzboncak.org/chasity_schamberger.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('raphael') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('evans_berge@brown.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["crypted_password", "$2a$10$I3O4G8Bgf/9yXy.GeuSxROlWF3aAB086fNVZZ667DRAgdeE6Tmm16"], ["email", "evans_berge@brown.org"], ["salt", "5LcbRmMxi6BznyqehEtw"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["username", "raphael"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('raphael') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('evans_berge@brown.org') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Rerum qui molestias et et.Quia atque distinctio.Dolor excepturi perspiciatis nostrum."], ["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["title", "rerumnecessitatibusdolorquaeratqui"], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:35 UTC +00:00], ["url", "http://schaden.net/randi.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.4ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('haley.cruickshank') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('norene@hillllangworth.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.8ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["crypted_password", "$2a$10$wgMPTiXW/H2o2nKIH0AY1.RGDIvfeK6l9EMbX80BAgsWEObzDtRMq"], ["email", "norene@hillllangworth.org"], ["salt", "XY5Xq9PoPZJgumxh98qp"], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["username", "haley.cruickshank"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('haley.cruickshank') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('norene@hillllangworth.org') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Qui harum earum.Ducimus eveniet assumenda quia illo adipisci.Ipsum aut provident omnis et quia officia."], ["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["title", "deseruntquireiciendisnihilest"], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["url", "http://white.biz/carmela.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.4ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('raymundo') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('mortimer@simonisgleason.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["crypted_password", "$2a$10$P/pWPnDCljjM0bxHJOC8P.wsC2xzlzn9yYC7E5NuyWjjkioM226QK"], ["email", "mortimer@simonisgleason.org"], ["salt", "HipkdW777zNJq2p2qaM1"], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["username", "raymundo"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('raymundo') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('mortimer@simonisgleason.org') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Autem aut omnis id aliquid.Ducimus unde enim et fugit.Consectetur excepturi error consequuntur."], ["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["title", "repudiandaenonilloautducimus"], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["url", "http://oberbrunner.org/austen.wehner.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('rosalia') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('rosella@schaefer.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["crypted_password", "$2a$10$GN1EtDx1olVBDkPxq73Jn.yIX/VF5o/vpB6OaObq/VLbFt5SfZeti"], ["email", "rosella@schaefer.org"], ["salt", "j9yZhnfsCF5oqx8shW4S"], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["username", "rosalia"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('rosalia') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('rosella@schaefer.org') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Doloremque laborum aut saepe quia ipsam in qui.Et nam quod ut similique pariatur laborum.Ducimus consequatur dolor dolorem incidunt asperiores qui."], ["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["title", "utnonvelitetaccusamus"], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["url", "http://kirlinmacgyver.com/jarvis.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.4ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('colin.gaylord') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('fannie.feeney@sauermclaughlin.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.6ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["crypted_password", "$2a$10$j0LkXFnUttU9lZodYgDBSefNbVmdfon3lzBd2Gz8KYNk9yeREI4t2"], ["email", "fannie.feeney@sauermclaughlin.org"], ["salt", "qM9pGKFzNvsJMahJsaqt"], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["username", "colin.gaylord"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.2ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('colin.gaylord') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('fannie.feeney@sauermclaughlin.org') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.7ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Vitae nulla necessitatibus corrupti consequatur.Itaque modi voluptatem ut porro voluptas sed pariatur.Eum minima dolorum distinctio officia consequatur fugit eveniet."], ["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["title", "rerumreiciendisquiaexercitationemet"], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "images" ("created_at", "post_id", "updated_at", "url") VALUES (?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["post_id", 1], ["updated_at", Sat, 26 Jul 2014 07:24:36 UTC +00:00], ["url", "http://hayesgottlieb.org/isadore.jpg"]]
+  [1m[36mSQL (0.1ms)[0m  [1mUPDATE "posts" SET "images_count" = COALESCE("images_count", 0) + 1 WHERE "posts"."id" = 1[0m
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.6ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36m (9.8ms)[0m  [1mCREATE TABLE "images" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "url" varchar(255), "created_at" datetime, "updated_at" datetime, "post_id" integer, "impressions_count" integer DEFAULT 0) [0m
+  [1m[35m (0.8ms)[0m  CREATE INDEX "index_images_on_post_id" ON "images" ("post_id")
+  [1m[36m (1.0ms)[0m  [1mCREATE TABLE "impressions" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "impressionable_type" varchar(255), "impressionable_id" integer, "user_id" integer, "controller_name" varchar(255), "action_name" varchar(255), "view_name" varchar(255), "request_hash" varchar(255), "ip_address" varchar(255), "session_hash" varchar(255), "message" text, "referrer" text, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (1.1ms)[0m  CREATE INDEX "controlleraction_ip_index" ON "impressions" ("controller_name", "action_name", "ip_address")
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "controlleraction_request_index" ON "impressions" ("controller_name", "action_name", "request_hash")[0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "controlleraction_session_index" ON "impressions" ("controller_name", "action_name", "session_hash")
+  [1m[36m (1.0ms)[0m  [1mCREATE INDEX "poly_ip_index" ON "impressions" ("impressionable_type", "impressionable_id", "ip_address")[0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "poly_request_index" ON "impressions" ("impressionable_type", "impressionable_id", "request_hash")
+  [1m[36m (1.1ms)[0m  [1mCREATE INDEX "poly_session_index" ON "impressions" ("impressionable_type", "impressionable_id", "session_hash")[0m
+  [1m[35m (1.0ms)[0m  CREATE INDEX "impressionable_type_message_index" ON "impressions" ("impressionable_type", "message", "impressionable_id")
+  [1m[36m (1.0ms)[0m  [1mCREATE INDEX "index_impressions_on_user_id" ON "impressions" ("user_id")[0m
+  [1m[35m (1.1ms)[0m  CREATE TABLE "posts" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar(255), "user_id" integer, "created_at" datetime, "updated_at" datetime, "body" text, "visible" boolean DEFAULT 'f', "price" varchar(255), "cached_votes_total" integer DEFAULT 0, "cached_votes_score" integer DEFAULT 0, "cached_votes_up" integer DEFAULT 0, "cached_votes_down" integer DEFAULT 0, "images_count" integer DEFAULT 0, "impressions_count" integer DEFAULT 0) 
+  [1m[36m (1.0ms)[0m  [1mCREATE INDEX "index_posts_on_cached_votes_down" ON "posts" ("cached_votes_down")[0m
+  [1m[35m (0.9ms)[0m  CREATE INDEX "index_posts_on_cached_votes_score" ON "posts" ("cached_votes_score")
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_posts_on_cached_votes_total" ON "posts" ("cached_votes_total")[0m
+  [1m[35m (1.0ms)[0m  CREATE INDEX "index_posts_on_cached_votes_up" ON "posts" ("cached_votes_up")
+  [1m[36m (1.0ms)[0m  [1mCREATE INDEX "index_posts_on_user_id" ON "posts" ("user_id")[0m
+  [1m[35m (1.0ms)[0m  CREATE TABLE "users" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(255) NOT NULL, "email" varchar(255), "crypted_password" varchar(255), "salt" varchar(255), "created_at" datetime, "updated_at" datetime, "remember_me_token" varchar(255), "remember_me_token_expires_at" datetime, "reset_password_token" varchar(255), "reset_password_token_expires_at" datetime, "reset_password_email_sent_at" datetime, "activation_state" varchar(255), "activation_token" varchar(255), "activation_token_expires_at" datetime, "first_name" varchar(255), "last_name" varchar(255), "speciality" varchar(255), "address" varchar(255), "contact_number" integer, "description" text, "oneliner" varchar(50), "photo" blob) 
+  [1m[36m (1.1ms)[0m  [1mCREATE INDEX "index_users_on_activation_token" ON "users" ("activation_token")[0m
+  [1m[35m (1.0ms)[0m  CREATE INDEX "index_users_on_remember_me_token" ON "users" ("remember_me_token")
+  [1m[36m (1.0ms)[0m  [1mCREATE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token")[0m
+  [1m[35m (1.1ms)[0m  CREATE TABLE "votes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "votable_id" integer, "votable_type" varchar(255), "voter_id" integer, "voter_type" varchar(255), "vote_flag" boolean, "vote_scope" varchar(255), "created_at" datetime, "updated_at" datetime) 
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_votes_on_votable_id_and_votable_type_and_vote_scope" ON "votes" ("votable_id", "votable_type", "vote_scope")[0m
+  [1m[35m (1.0ms)[0m  CREATE INDEX "index_votes_on_voter_id_and_voter_type_and_vote_scope" ON "votes" ("voter_id", "voter_type", "vote_scope")
+  [1m[36m (1.0ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [1m[35m (1.0ms)[0m  CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")
+  [1m[36m (0.1ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35m (0.8ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20140720224608')
+  [1m[36m (0.8ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130810054033')[0m
+  [1m[35m (0.9ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811164651')
+  [1m[36m (0.8ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130811164652')[0m
+  [1m[35m (0.7ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811164653')
+  [1m[36m (0.8ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130811164654')[0m
+  [1m[35m (1.0ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811210732')
+  [1m[36m (1.1ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130811211114')[0m
+  [1m[35m (1.1ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130811212806')
+  [1m[36m (1.0ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130813031117')[0m
+  [1m[35m (0.9ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130813031817')
+  [1m[36m (0.8ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130817160742')[0m
+  [1m[35m (1.0ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130817161614')
+  [1m[36m (1.1ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130817191748')[0m
+  [1m[35m (1.1ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130817193501')
+  [1m[36m (1.1ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20130817194153')[0m
+  [1m[35m (1.1ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20130817195343')
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('micheal') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('jevon@dietrich.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (4.0ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["crypted_password", "$2a$10$0QBG.g27j.Ix5YeAWkFGUuUfOmyyxMdSSfD3qke0gAPDRkL2n9yXm"], ["email", "jevon@dietrich.com"], ["salt", "5yzd3noy8d48egxxC9Ht"], ["updated_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["username", "micheal"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('micheal') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('jevon@dietrich.com') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (1.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Et quia atque fugit alias.Laborum voluptatem numquam aut.Porro illo dolores."], ["created_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["title", "veritatisanimiomnisrepellendusperspiciatis"], ["updated_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('giovanna') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('jaleel@wiegandgoodwin.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["crypted_password", "$2a$10$hILgPsQosvWbsmWBmfTx7e2Qjc5cO1EVP.D7kbmxbGmRN6lp8SQka"], ["email", "jaleel@wiegandgoodwin.com"], ["salt", "2bSDKVdNZsCGfEB4xgWn"], ["updated_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["username", "giovanna"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('giovanna') AND "users"."id" != 2) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('jaleel@wiegandgoodwin.com') AND "users"."id" != 2) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Consequatur labore vitae et alias.Velit possimus repellat architecto distinctio cupiditate sequi fuga.Cum tempore saepe rerum nobis et."], ["created_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["title", "doloresaliascommodidignissimosillo"], ["updated_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["user_id", 2]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSELECT COUNT(*) FROM "posts" WHERE "posts"."visible" = 'f'[0m
+  [1m[35mPost Load (0.1ms)[0m  SELECT "posts".* FROM "posts" WHERE "posts"."visible" = 'f' ORDER BY created_at DESC
+  [1m[36m (7.8ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('brenden') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('ken_dickens@krisveum.info') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["crypted_password", "$2a$10$sOtZxtLxXf29k5Q.Qrcw4eunNBI0vy7mknCwsh3OpTbh9IMkUSUvq"], ["email", "ken_dickens@krisveum.info"], ["salt", "6TUpxuT7ypWygpCfsmvp"], ["updated_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["username", "brenden"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('brenden') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('ken_dickens@krisveum.info') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Fugiat quo possimus sed maxime.Iusto sapiente veritatis facilis.Magni veniam optio."], ["created_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["title", "quodutdistinctiositquidem"], ["updated_at", Sat, 26 Jul 2014 07:25:00 UTC +00:00], ["user_id", 1], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('antwan') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('richie@bailey.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["crypted_password", "$2a$10$/uNTSMoWVUQw614K.wHVPumTCk3tv9jsblEQhdrmGw5oHsfnlXPBG"], ["email", "richie@bailey.com"], ["salt", "p1b9dix53NDKsUym2epr"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["username", "antwan"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('antwan') AND "users"."id" != 2) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('richie@bailey.com') AND "users"."id" != 2) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Qui non impedit quasi architecto.Voluptates nihil impedit commodi.Eaque incidunt eveniet debitis reprehenderit nihil qui."], ["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["title", "animivoluptasdelectusmollitiadeleniti"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["user_id", 2], ["visible", true]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('marjory') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('kayley@dietrichwilliamson.com') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["crypted_password", "$2a$10$xwn2LYIPrI6mHOXP7Qp4f.N/k1WynC3Evf4ZN7DAHlayudL8EufFO"], ["email", "kayley@dietrichwilliamson.com"], ["salt", "zDxq8qN3FnnvXwpmKuKk"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["username", "marjory"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('marjory') AND "users"."id" != 3) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('kayley@dietrichwilliamson.com') AND "users"."id" != 3) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Sit dolor reprehenderit.Exercitationem fugit voluptatem sit vel est blanditiis.Quidem quisquam quis exercitationem magni."], ["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["title", "eosdolorumofficiasuscipiteos"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["user_id", 3], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('allene_walter') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('rickey@mosciski.net') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["crypted_password", "$2a$10$OS5bCcSEMt1V9bx3jWGcQOhD6ZOzZaPDwunV2wRuZSMFq0HzikSfi"], ["email", "rickey@mosciski.net"], ["salt", "MWhJgU9jobwysgbtrksS"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["username", "allene_walter"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('allene_walter') AND "users"."id" != 4) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('rickey@mosciski.net') AND "users"."id" != 4) LIMIT 1
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Possimus dolorem qui eos debitis veritatis.Quod asperiores corporis vero et ut cum.Deserunt sapiente nemo rerum modi delectus."], ["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["title", "abconsequaturilloinbeatae"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["user_id", 4], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('sylvan.botsford') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('maximo.homenick@collins.net') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["crypted_password", "$2a$10$va71qQUSAsYTkxyrgS15h.bwwKJeStpc14dlVrGAAEtuosVhHLlb6"], ["email", "maximo.homenick@collins.net"], ["salt", "zJGgmSNMyybpz7xQvsxR"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["username", "sylvan.botsford"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('sylvan.botsford') AND "users"."id" != 5) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('maximo.homenick@collins.net') AND "users"."id" != 5) LIMIT 1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id", "visible") VALUES (?, ?, ?, ?, ?, ?)[0m  [["body", "Numquam vel repellat deleniti sit ipsum.Quibusdam dolor alias qui.In voluptatem reprehenderit et omnis molestiae."], ["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["title", "recusandaequiaofficiadoloresdolores"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["user_id", 5], ["visible", true]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (0.1ms)[0m  [1mSELECT COUNT(*) FROM "posts" WHERE "posts"."visible" = 't'[0m
+  [1m[35mPost Load (0.1ms)[0m  SELECT "posts".* FROM "posts" WHERE "posts"."visible" = 't' ORDER BY created_at DESC
+  [1m[36m (8.7ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('gilberto_bogisich') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('hellen@watsicaconnelly.org') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.5ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["crypted_password", "$2a$10$iKDQj2EQIUMolObbkkPtMOHTCv8DrfsVPN4gklCfAj6Ac4QLkQxDu"], ["email", "hellen@watsicaconnelly.org"], ["salt", "xjzGbyXytWSSYzNrpwTp"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["username", "gilberto_bogisich"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('gilberto_bogisich') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('hellen@watsicaconnelly.org') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Ad aut est maxime voluptate nulla enim sunt.Voluptas aut est nam occaecati quasi aliquid.Quo nam eum."], ["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["title", "providentsedmolestiaequout"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('reggie_denesik') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('ivory@witting.name') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["crypted_password", "$2a$10$aBa9ckjIY9AApbLB6MRWXuV3GiETsYAHjGGCvqE6SO1ymjwBQ9JYS"], ["email", "ivory@witting.name"], ["salt", "m69k1gj7qL2dGtqjs3Yj"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["username", "reggie_denesik"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('reggie_denesik') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('ivory@witting.name') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Neque aut recusandae ipsum.Consequatur quod nostrum consequuntur eos beatae.Vero quam perferendis alias."], ["created_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["title", "deseruntautemullamrepudiandaequia"], ["updated_at", Sat, 26 Jul 2014 07:25:01 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (7.4ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mUser Exists (0.2ms)[0m  SELECT 1 AS one FROM "users" WHERE LOWER("users"."username") = LOWER('clarabelle') LIMIT 1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('carrie@gaylord.info') LIMIT 1[0m
+Binary data inserted for `string` type on column `crypted_password`
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "users" ("created_at", "crypted_password", "email", "salt", "updated_at", "username") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", Sat, 26 Jul 2014 07:25:02 UTC +00:00], ["crypted_password", "$2a$10$R1LI7wST2E5Il4OaX4pOG.7uSFDu0nE5Kme1WA1SzVtJcvC3.Zeay"], ["email", "carrie@gaylord.info"], ["salt", "7KcsZPqzaz1672QGHhHN"], ["updated_at", Sat, 26 Jul 2014 07:25:02 UTC +00:00], ["username", "clarabelle"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+  [1m[36mUser Exists (0.1ms)[0m  [1mSELECT 1 AS one FROM "users" WHERE (LOWER("users"."username") = LOWER('clarabelle') AND "users"."id" != 1) LIMIT 1[0m
+  [1m[35mUser Exists (0.1ms)[0m  SELECT 1 AS one FROM "users" WHERE (LOWER("users"."email") = LOWER('carrie@gaylord.info') AND "users"."id" != 1) LIMIT 1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "posts" ("body", "created_at", "title", "updated_at", "user_id") VALUES (?, ?, ?, ?, ?)[0m  [["body", "Itaque tempora a.Ipsa totam debitis ut et.Accusantium et quis magnam."], ["created_at", Sat, 26 Jul 2014 07:25:02 UTC +00:00], ["title", "suntsitullamessealias"], ["updated_at", Sat, 26 Jul 2014 07:25:02 UTC +00:00], ["user_id", 1]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+  [1m[36m (8.5ms)[0m  [1mrollback transaction[0m
