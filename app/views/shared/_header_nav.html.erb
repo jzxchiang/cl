@@ -12,7 +12,7 @@
         <% if current_user %>
           <ul class="nav pull-right" style="margin: 5px 10px 0 0; color: #00B0A1;">
             <li><%= link_to "New Post" , new_post_path, id: "newpost" %></li>
-           <!-- <li><%= link_to "View Profile" , current_user %></li> -->
+            <li><%= link_to "View Profile" , current_user %></li>
             <li><%= link_to "Edit Profile", edit_user_path(current_user.id) %></li>
             <li><%= link_to "Logout", logout_path, id: "logout" %></li>
           </ul>

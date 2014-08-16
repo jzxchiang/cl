@@ -1,6 +1,11 @@
-<h1>
-  <%= @user.username %>
-</h1>
+<div align="center">
+  <h1><%= "Dr. #{@user.first_name} #{@user.last_name}" %></h1>
+  <h4><%= @user.oneliner %></h4>
+  <h5>
+    <img height="32" width="32" src="http://cdn.flaticon.com/png/256/30915.png">&nbsp;<%= @user.education %>
+  </h5>
+  <p><%= @user.description %></p>
+</div>
 
 <% @user.posts.each do |post| %>
   <div class="media">
