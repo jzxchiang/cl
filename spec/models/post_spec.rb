@@ -10,7 +10,8 @@ describe Post do
 
   describe 'associations' do 
     it { should belong_to :user }
-    it { should have_many(:images).dependent(:destroy)}
+    it { should have_many(:images).dependent(:destroy) }
+    it { should have_and_belong_to_many(:tags) }
   end
 
   describe 'scopes' do 
