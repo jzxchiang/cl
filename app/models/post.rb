@@ -9,6 +9,7 @@ class Post < ActiveRecord::Base
   validates_associated :user, :if => :user_id
 
   has_many :images, dependent: :destroy
+  has_and_belongs_to_many :tags
 
   alias_attribute :score, :cached_votes_score 
   alias_attribute :view_count, :impressions_count 
