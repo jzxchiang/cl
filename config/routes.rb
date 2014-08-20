@@ -16,4 +16,5 @@ ShoeShop::Application.routes.draw do
 
   get 'login' => 'sessions#new'
   get 'logout' => 'sessions#destroy'
+  get 'tags/:tag', to: 'posts#index', as: :tag
 end

@@ -24,7 +24,8 @@
         <%= link_to entry.body, :target => "_blank" do %>
           <%= entry.title %>
         <% end %><%= link_to "[+]", entry %>
-        <h6 class='m5margin'>Posted by <span class='drclr'><%= entry.user.username %></span> on <%= entry.created_at.strftime("%b. %d %Y") %></h6>
+        <h6 class='m5margin'>Posted by <span class='drclr'><%= entry.user.username %></span> on <%= entry.created_at.strftime("%b. %d %Y") %><br>
+        Tags: <%= raw entry.tag_list.map { |t| link_to t, tag_path(t) }.join(', ') %></h6>
       </div>
       <div class='col-lg-1 sub-lbl-head m5margin'>
         Accurate <br/> Practical<br> Recent <br> Readable

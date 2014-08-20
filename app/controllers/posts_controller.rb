@@ -8,7 +8,12 @@ class PostsController < ApplicationController
   end
 
   def index
-    @posts = Post.order("cached_votes_score DESC")
+    if params[:tag]
+      @posts = Post.tagged_with(params[:tag]).order("cached_votes_score DESC")  
+    else
+      @posts = Post.order("cached_votes_score DESC")
+    end
+    @tags = Post.tag_counts_on(:tags)
   end
 
   def new
@@ -61,6 +66,6 @@ private
 
   # Only allow a trusted parameter "white list" through.
   def post_params
-    params.require(:post).permit(:brand, :title, :size_id, :price, :body)
+    params.require(:post).permit(:brand, :title, :size_id, :price, :body, :tag_list)
   end
 end

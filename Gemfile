@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 gem 'rails', '4.0.0'
 #gem 'rails', github: 'rails/rails'
 gem 'acts_as_votable', '~> 0.6.0' #https://github.com/ryanto/acts_as_votable
+gem 'acts-as-taggable-on'
 gem 'impressionist'
 
 gem 'simple_form'

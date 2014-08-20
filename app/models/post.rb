@@ -1,6 +1,7 @@
 class Post < ActiveRecord::Base
   is_impressionable counter_cache: true
   acts_as_votable
+  acts_as_taggable
     
   validates :title,   presence: true, length: { maximum: 30 }
   validates :body,    presence: true
