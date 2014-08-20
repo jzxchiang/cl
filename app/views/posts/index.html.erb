@@ -58,14 +58,9 @@
     <div class="col-lg-2">
       <div class="sidebar">
         <ul>
-          <li><a href="">Diabetes</a></li>
-          <li><a href="">Nutrition</a></li>
-          <li><a href="">Carbohydrates</a></li>
-          <li><a href="">Sugar</a></li>
-          <li><a href="">Glucose&nbsp;Measurement</a></li>
-          <li><a href="">Diet&nbsp;Modification</a></li>
-          <li><a href="">Protein</a></li>
-          <li><a href="">Fat</a></li>
+          <% @tags.each do |tag| %>
+          <li><%= link_to tag.name.split.map(&:capitalize).join(' '), tag_path(tag.name) %></li>
+          <% end %> 
         </ul>
       </div>
     </div>
